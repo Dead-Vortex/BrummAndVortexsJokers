@@ -1,0 +1,14 @@
+{
+    "id": "bvjokers",
+    "name": "Brumm & Vortex's Jokers",
+    "display_name": "Brumm & Vortex",
+    "author": [ "Brumm", "Vortex" ],
+    "description": "[add later]",
+    "prefix": "bvjokers",
+    "main_file": "bvjokers.lua",
+    "priority": 0,
+    "badge_colour": "",
+    "badge_text_colour": "",
+    "version": "1.0.0",
+    "dependencies": []
+}
