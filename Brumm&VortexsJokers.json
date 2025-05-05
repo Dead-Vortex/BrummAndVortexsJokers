@@ -3,7 +3,7 @@
     "name": "Brumm & Vortex's Jokers",
     "display_name": "Brumm & Vortex",
     "author": [ "Brumm", "Vortex" ],
-    "description": "[add later]",
+    "description": "Adds some silly jokers to the funny card game.",
     "prefix": "bvjokers",
     "main_file": "bvjokers.lua",
     "priority": 0,
