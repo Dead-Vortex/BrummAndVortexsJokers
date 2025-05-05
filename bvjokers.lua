@@ -118,7 +118,7 @@ SMODS.Joker {
 		end
 	end
 }
--- TEST
+
 --SMODS.Joker {
 --	key = 'collector',
 --	loc_txt = {
