@@ -172,32 +172,38 @@ SMODS.Joker {
 	end
 }
 
---SMODS.Joker {
---	key = 'collector',
---	loc_txt = {
---		name = 'Collector',
---		text = {
---			"{C:mult}+#1#{} Mult for each",
---			"unique ranked scoring",
---			"card in played hand"
---		}
---	},
---	config = { extra = { mult = 5 } },
---	loc_vars = function(self, info_queue, card)
---		return { vars = { card.ability.extra.mult } }
---	end,
---	rarity = 1,
---	atlas = 'default',
---	pos = { x = 0, y = 0 },
---	cost = 3,
---	calculate = function(self, card, context)
---		if context.joker_main then
---			if not table.contains(uniquecards, context.other_card:get_id())
---				table.insert(uniquecards, context.other_card:get_id())
---			return { mult = card.ability.extra.mult *  }
---		end
---	end
---}
+SMODS.Joker {
+	key = 'collector',
+	loc_txt = {
+		name = 'Collector',
+		text = {
+			"{C:mult}+#1#{} Mult for each",
+			"unique ranked scoring",
+			"card in played hand"
+		}
+	},
+	config = { extra = { mult = 5, uniquecards = {}, uniquecardcount = 0 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.mult } }
+	end,
+	rarity = 1,
+	atlas = 'default',
+	pos = { x = 0, y = 0 },
+	cost = 3,
+	calculate = function(self, card, context)
+		if context.individual and context.cardarea == G.play then
+			if not table.contains(card.ability.extra.uniquecards, context.other_card:get_id()) then
+				table.insert(card.ability.extra.uniquecards, context.other_card:get_id())
+				card.ability.extra.uniquecardcount = card.ability.extra.uniquecardcount + 1
+			end
+		end
+		if context.joker_main then
+			return { mult = card.ability.extra.mult * card.ability.extra.uniquecardcount }
+--			uniquecardcount = 0
+--			uniquecards = {}
+		end
+	end
+}
 
 SMODS.Joker {
 	key = 'gamblerjoker',
@@ -205,7 +211,7 @@ SMODS.Joker {
 		name = 'Gambler Joker',
 		text = {
 			"Gains {C:mult}+1{} Mult per",
-			"card scored",
+			"card in played hand",
 			"{C:green}#2# in #3#{} chance to reset",
 			"at end of round",
 			"{C:inactive}(Currently {C:mult}+#1#{C:inactive} Mult)"
@@ -244,12 +250,12 @@ SMODS.Joker {
 	loc_txt = {
 		name = 'Drain Bamage',
 		text = {
-			"{C:dark_edition}+#1#{} Joker Slot#3#",
+			"{C:dark_edition}+#1#{} Joker Slots",
 			"{C:dark_edition}-#2#{} Joker Slot when",
 			"{C:attention}Boss Blind{} defeated"
 		}
 	},
-	config = { extra = { extra_slots = 2, slot_loss = 1, plural = "s" } },
+	config = { extra = { extra_slots = 2, slot_loss = 1 } },
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.extra_slots, card.ability.extra.slot_loss, card.ability.extra.plural } }
 	end,
@@ -269,10 +275,72 @@ SMODS.Joker {
 			card:start_dissolve({ G.C.RED }, nil, 1.6)
 			return { message = "Braincells?", colour = G.C.FILTER }
 		end
-		if card.ability.extra.extra_slots == 1 then
-			card.ability.extra.plural = ""
-		else
-			card.ability.extra.plural = "s"
+	end
+}
+
+SMODS.Joker {
+	key = 'photochad',
+	loc_txt = {
+		name = 'Photochad',
+		text = {
+			"If first played card is a",
+			"{C:attention}#1#{} of {C:mult}#2#{},",
+			"{C:attention}retrigger{} it twice and",
+			"give {X:mult,C:white}X2{} Mult when scored",
+			"Changes to a different",
+			"{C:attention}Face Card{} every hand played"
+		}
+	},
+	config = { extra = { card = "King", suit = "Hearts", xmult = 2, face_cards = {"King", "Queen", "Jack"} } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.card, card.ability.extra.suit, card.ability.extra.xmult }, colours = { G.C.SUITS[card.ability.extra.suit] } }
+	end,
+	blueprint_compat = true,
+	rarity = 3,
+	atlas = 'default',
+	pos = { x = 0, y = 0 },
+	cost = 9,
+	calculate = function(self, card, context)
+		if context.after and context.cardarea == G.play then
+			card.ability.extra.card = pseudorandom_element(card.ability.extra.face_cards, seed)
+			card.ability.extra.suit = pseudorandom_element(SMODS.Suits, seed)
+		end
+		if context.joker_main then
+			return { xmult = card.ability.extra.xmult }
+		end
+	end
+}
+
+SMODS.Joker {
+	key = 'crackheadjoker',
+	loc_txt = {
+		name = 'Crackhead Joker',
+		text = {
+			"This Joker gains {X:mult,C:white}X#2#{} Mult for",
+			"every card discarded this round",
+			"{C:inactive}(Currently {X:mult,C:white}X#1#{C:inactive} Mult){}"
+		}
+	},
+	config = { extra = { xmult = 1, xmult_gain = 0.05 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.xmult, card.ability.extra.xmult_gain } }
+	end,
+	blueprint_compat = true,
+	rarity = 3,
+	atlas = 'default',
+	pos = { x = 0, y = 0 },
+	cost = 9,
+	calculate = function(self, card, context)
+		if context.joker_main then
+			return { xmult = card.ability.extra.xmult }
+		end
+		if context.discard and not context.blueprint then
+			card.ability.extra.xmult = card.ability.extra.xmult + card.ability.extra.xmult_gain
+			card_eval_status_text(card, 'extra', nil, nil, nil,
+					{ message = "X".. card.ability.extra.xmult.. " Mult", colour = G.C.MULT })
+		end
+		if context.end_of_round and not context.blueprint then
+			card.ability.extra.xmult = 1
 		end
 	end
 }
