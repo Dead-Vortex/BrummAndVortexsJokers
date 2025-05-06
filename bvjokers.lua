@@ -345,6 +345,37 @@ SMODS.Joker {
 	end
 }
 
+SMODS.Joker {
+	key = 'holyfuck',
+	loc_txt = {
+		name = 'Holy Fu-',
+		text = {
+			"{X:mult,C:white}X#1#{} Mult",
+			"Every time another card's",
+			"{X:mult,C:white}XMult{} activates, multiply",
+			"this joker's mult by {X:mult,C:white}X#2#{}"
+		}
+	},
+	config = { extra = { xmult = 2, xmult_increase = 1.5 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.xmult, card.ability.extra.xmult_gain } }
+	end,
+	blueprint_compat = true,
+	rarity = 4,
+	atlas = 'holyfu',
+	pos = { x = 0, y = 0 },
+	cost = 20,
+	calculate = function(self, card, context)
+		if context.joker_main then
+			return { xmult = card.ability.extra.xmult }
+		end
+		if context.post_joker then
+			card.ability.extra.xmult = card.ability.extra.xmult * card.ability.extra.xmult_gain
+		end
+	end
+}
+
+
 --Vouchers
 
 SMODS.Voucher {
@@ -396,7 +427,7 @@ SMODS.Voucher {
 			"Create a {C:dark_edition}Negative{}",
 			"{C:attention}Wheel of Fortune{} after",
 			"defeating a {C:attention}Blind{}",
-			"{C:red}-$1{} per round"
+			"{C:red}-$7{} per round"
 		}
 	},
 	loc_vars = function(self, info_queue, card)
