@@ -1,10 +1,62 @@
+--Define each joker texture as a seperate spritesheet
+
 SMODS.Atlas {
-	key = "BrummAndVortexsJokers",
-	path = "BrummAndVortexsJokers.png",
+	key = "default",
+	path = "default.png",
 	px = 71,
 	py = 95
 }
 
+SMODS.Atlas {
+	key = "atombomb",
+	path = "atombomb.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "crinklecut",
+	path = "crinklecut.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "doubledown",
+	path = "doubledown.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "skong",
+	path = "skong.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "holyfu",
+	path = "holyfu.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "eraser",
+	path = "eraser.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "placeholder",
+	path = "placeholder.png",
+	px = 71,
+	py = 95
+}
+
+--Jokers
 
 SMODS.Joker {
 	key = 'atombomb',
@@ -21,8 +73,8 @@ SMODS.Joker {
 	end,
 	blueprint_compat = true,
 	rarity = 3,
-	atlas = 'BrummAndVortexsJokers',
-	pos = { x = 2, y = 0 },
+	atlas = 'atombomb',
+	pos = { x = 0, y = 0 },
 	cost = 9,
 	calculate = function(self, card, context)
 		if context.joker_main then
@@ -55,8 +107,8 @@ SMODS.Joker {
 	blueprint_compat = false,
 	-- TODO: fix blueprint compat
 	rarity = 2,
-	atlas = 'BrummAndVortexsJokers',
-	pos = { x = 1, y = 1 },
+	atlas = 'doubledown',
+	pos = { x = 0, y = 0 },
 	cost = 5,
 	calculate = function(self, card, context)
 		if context.skip_blind then
@@ -95,9 +147,10 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.Xchips, card.ability.extra.Xchips_loss } }
 	end,
 	blueprint_compat = true,
+	eternal_compat = false,
 	rarity = 3,
-	atlas = 'BrummAndVortexsJokers',
-	pos = { x = 1, y = 0 },
+	atlas = 'crinklecut',
+	pos = { x = 0, y = 0 },
 	cost = 7,
 	calculate = function(self, card, context)
 		if context.joker_main then
@@ -134,7 +187,7 @@ SMODS.Joker {
 --		return { vars = { card.ability.extra.mult } }
 --	end,
 --	rarity = 1,
---	atlas = 'BrummAndVortexsJokers',
+--	atlas = 'default',
 --	pos = { x = 0, y = 0 },
 --	cost = 3,
 --	calculate = function(self, card, context)
@@ -164,7 +217,7 @@ SMODS.Joker {
 	end,
 	blueprint_compat = true,
 	rarity = 1,
-	atlas = 'BrummAndVortexsJokers',
+	atlas = 'default',
 	pos = { x = 0, y = 0 },
 	cost = 3,
 	calculate = function(self, card, context)
@@ -201,16 +254,17 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.extra_slots, card.ability.extra.slot_loss, card.ability.extra.plural } }
 	end,
 	blueprint_compat = true,
+	eternal_compat = false,
 	rarity = 2,
-	atlas = 'BrummAndVortexsJokers',
+	atlas = 'default',
 	pos = { x = 0, y = 0 },
 	cost = 6,
 	calculate = function(self, card, context)
-		G.jokers.config.card_limit = G.jokers.config.card_limit + card.ability.extra.extra_slots
+--		G.jokers.config.card_limit = G.jokers.config.card_limit + card.ability.extra.extra_slots
 		if context.end_of_round and context.game_over == false and G.GAME.blind.boss and not context.repetition and not context.blueprint then
 			card.ability.extra.extra_slots = card.ability.extra.extra_slots - card.ability.extra.slot_loss
 		end
-		if card.ability.extra.extra_slots = 0 then
+		if card.ability.extra.extra_slots == 0 then
 			card:remove_from_deck()
 			card:start_dissolve({ G.C.RED }, nil, 1.6)
 			return { message = "Braincells?", colour = G.C.FILTER }
@@ -222,6 +276,8 @@ SMODS.Joker {
 		end
 	end
 }
+
+--Vouchers
 
 SMODS.Voucher {
 	key = 'refund',
