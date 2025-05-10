@@ -56,6 +56,27 @@ SMODS.Atlas {
 	py = 95
 }
 
+SMODS.Atlas {
+	key = "photochad",
+	path = "photochad.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "spaghetti",
+	path = "spaghetti.png",
+	px = 71,
+	py = 95
+}
+
+SMODS.Atlas {
+	key = "refund",
+	path = "vouchers/refund.png",
+	px = 71,
+	py = 95
+}
+
 --Jokers
 
 SMODS.Joker {
@@ -148,10 +169,10 @@ SMODS.Joker {
 	end,
 	blueprint_compat = true,
 	eternal_compat = false,
-	rarity = 3,
+	rarity = 2,
 	atlas = 'crinklecut',
 	pos = { x = 0, y = 0 },
-	cost = 7,
+	cost = 6,
 	calculate = function(self, card, context)
 		if context.joker_main then
 			return { xchips = card.ability.extra.Xchips }
@@ -261,12 +282,17 @@ SMODS.Joker {
 	end,
 	blueprint_compat = true,
 	eternal_compat = false,
-	rarity = 2,
+	rarity = 3,
 	atlas = 'default',
 	pos = { x = 0, y = 0 },
-	cost = 6,
+	cost = 8,
+	add_to_deck = function(self, card, from_debuff)
+		G.jokers.config.card_limit = G.jokers.config.card_limit + card.ability.extra.extra_slots
+	end,
+	remove_from_deck = function(self, card, from_debuff)
+		G.jokers.config.card_limit = G.jokers.config.card_limit - card.ability.extra.extra_slots
+	end,
 	calculate = function(self, card, context)
---		G.jokers.config.card_limit = G.jokers.config.card_limit + card.ability.extra.extra_slots
 		if context.end_of_round and context.game_over == false and G.GAME.blind.boss and not context.repetition and not context.blueprint then
 			card.ability.extra.extra_slots = card.ability.extra.extra_slots - card.ability.extra.slot_loss
 		end
@@ -288,7 +314,7 @@ SMODS.Joker {
 			"{C:attention}retrigger{} it twice and",
 			"give {X:mult,C:white}X2{} Mult when scored",
 			"Changes to a different",
-			"{C:attention}Face Card{} every hand played"
+			"{C:attention}face{} card at end of round"
 		}
 	},
 	config = { extra = { card = "King", suit = "Hearts", xmult = 2, face_cards = {"King", "Queen", "Jack"} } },
@@ -297,13 +323,14 @@ SMODS.Joker {
 	end,
 	blueprint_compat = true,
 	rarity = 3,
-	atlas = 'default',
+	atlas = 'photochad',
 	pos = { x = 0, y = 0 },
 	cost = 9,
 	calculate = function(self, card, context)
-		if context.after and context.cardarea == G.play then
+		if context.end_of_round and not context.blueprint then
 			card.ability.extra.card = pseudorandom_element(card.ability.extra.face_cards, seed)
 			card.ability.extra.suit = pseudorandom_element(SMODS.Suits, seed)
+			print(pseudorandom_element(SMODS.Suits, seed))
 		end
 		if context.joker_main then
 			return { xmult = card.ability.extra.xmult }
@@ -321,7 +348,7 @@ SMODS.Joker {
 			"{C:inactive}(Currently {X:mult,C:white}X#1#{C:inactive} Mult){}"
 		}
 	},
-	config = { extra = { xmult = 1, xmult_gain = 0.05 } },
+	config = { extra = { xmult = 1, xmult_gain = 0.07 } },
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.xmult, card.ability.extra.xmult_gain } }
 	end,
@@ -352,12 +379,15 @@ SMODS.Joker {
 		text = {
 			"{X:mult,C:white}X#1#{} Mult",
 			"Every time another card's",
-			"{X:mult,C:white}XMult{} activates, multiply",
+			"{C:dark_edition}Edition{} or {X:mult,C:white}XMult{} activates, multiply",
 			"this joker's mult by {X:mult,C:white}X#2#{}"
 		}
 	},
-	config = { extra = { xmult = 2, xmult_increase = 1.5 } },
+	config = { extra = { xmult = 2, xmult_increase = 1.25 } },
 	loc_vars = function(self, info_queue, card)
+		info_queue[#info_queue + 1] = G.P_CENTERS.e_foil
+		info_queue[#info_queue + 1] = G.P_CENTERS.e_holo
+		info_queue[#info_queue + 1] = G.P_CENTERS.e_polychrome
 		return { vars = { card.ability.extra.xmult, card.ability.extra.xmult_increase } }
 	end,
 	blueprint_compat = true,
@@ -366,15 +396,93 @@ SMODS.Joker {
 	pos = { x = 0, y = 0 },
 	cost = 20,
 	calculate = function(self, card, context)
-		if context.post_joker and context.other_ret then
+		if context.post_joker then
 			card.ability.extra.xmult = card.ability.extra.xmult * card.ability.extra.xmult_increase
 		end
 		if context.joker_main then
 			return { xmult = card.ability.extra.xmult }
 		end
+	end,
+}
+
+SMODS.Joker {
+	key = 'wildfire',
+	loc_txt = {
+		name = 'Wildfire',
+		text = {
+			"{C:green}#3# in #1#{} chance for each",
+			"played card to recieve a random",
+			"{C:attention}Enhancement, Seal,{} or {C:dark_edition}Edition{}",
+			"when scored",
+			"{C:green}#3# in #2#{} chance for each",
+			"played card to be destroyed",
+			"when scored"
+		}
+	},
+	config = { extra = { enhance_odds = 10, destroy_odds = 20, chosen_enhance = 0 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.enhance_odds, card.ability.extra.destroy_odds, (G.GAME.probabilities.normal or 1) } }
+	end,
+	blueprint_compat = true,
+	rarity = 3,
+	atlas = 'default',
+	pos = { x = 0, y = 0 },
+	cost = 9,
+	calculate = function(self, card, context)
+		if context.individual and context.cardarea == G.play then
+			other_card = card
+			if pseudorandom('wildfire') < G.GAME.probabilities.normal / card.ability.extra.destroy_odds then
+				if context.destroy_card and context.cardarea == G.play then
+					return {remove = true}
+				end
+			end
+--			if pseudorandom('wildfire') < G.GAME.probabilities.normal / card.ability.extra.enhance_odds then
+--				card.ability.extra.chosen_enhance = pseudorandom('wildfire')
+--				if card.ability.extra.chosen_enhance < 0.34 then
+--					card:set_ability(SMODS.poll_enhancement())
+--				elseif card.ability.extra.chosen_enhance > 0.33 and card.ability.extra.chosen_enhance < 0.66 then
+--					card:set_seal(SMODS.poll_seal())
+--				else
+--					card:set_edition(poll_edition())
+--				end
+--			end
+		end
 	end
 }
 
+SMODS.Joker {
+	key = 'spaghetti',
+	loc_txt = {
+		name = 'Spaghetti',
+		text = {
+			"Levels up the next",
+			"{C:attention}#1#{} played {C:attention}poker hands{}"
+		}
+	},
+	config = { extra = { uses = 8 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.uses } }
+	end,
+	blueprint_compat = true,
+	rarity = 2,
+	atlas = 'spaghetti',
+	pos = { x = 0, y = 0 },
+	cost = 7,
+	calculate = function(self, card, context)
+		if context.before then
+			if not context.blueprint then
+				card.ability.extra.uses = card.ability.extra.uses - 1
+			end
+			return { level_up = true, message = localize('k_level_up_ex') }
+		end
+		if context.final_scoring_step and card.ability.extra.uses < 1 and not context.blueprint then
+			--wrong context
+			card:remove_from_deck()
+			card:start_dissolve({ G.C.RED }, nil, 1.6)
+			return { message = localize("k_eaten_ex"), colour = G.C.FILTER }
+		end
+	end,
+}
 
 --Vouchers
 
@@ -387,6 +495,7 @@ SMODS.Voucher {
 			"a Booster Pack"
 		}
 	},
+	atlas = 'refund',
 	calculate = function(self, card, context)
 		if context.skipping_booster then
 			ease_dollars(5)
