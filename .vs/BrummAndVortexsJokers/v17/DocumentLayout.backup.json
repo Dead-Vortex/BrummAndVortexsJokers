@@ -7,10 +7,10 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:bvjokers.lua||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\ExampleJokersMod\\ModdedVanilla.lua||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\VanillaRemade\\src\\jokers.lua||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\VanillaRemade\\src\\jokers.lua||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\ExampleJokersMod\\ModdedVanilla.lua||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -24,27 +24,29 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "jokers.lua",
               "DocumentMoniker": "C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\VanillaRemade\\src\\jokers.lua",
               "RelativeDocumentMoniker": "..\\VanillaRemade\\src\\jokers.lua",
               "ToolTip": "C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\VanillaRemade\\src\\jokers.lua",
               "RelativeToolTip": "..\\VanillaRemade\\src\\jokers.lua",
-              "ViewState": "AgIAAGkGAAAAAAAAAAAlwJ0GAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAAsKAAAAAAAAAAAQwCUKAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-08T01:45:07.158Z"
+              "WhenOpened": "2025-05-08T01:45:07.158Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ModdedVanilla.lua",
               "DocumentMoniker": "C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\ExampleJokersMod\\ModdedVanilla.lua",
               "RelativeDocumentMoniker": "..\\ExampleJokersMod\\ModdedVanilla.lua",
               "ToolTip": "C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\ExampleJokersMod\\ModdedVanilla.lua",
               "RelativeToolTip": "..\\ExampleJokersMod\\ModdedVanilla.lua",
-              "ViewState": "AgIAAAwBAAAAAAAAAAAAAB4BAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAGwBAAAAAAAAAAAAAJEBAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-06T03:58:36.676Z"
+              "WhenOpened": "2025-05-06T03:58:36.676Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -54,7 +56,7 @@
               "RelativeDocumentMoniker": "bvjokers.lua",
               "ToolTip": "C:\\Users\\miles\\AppData\\Roaming\\Balatro\\Mods\\BrummAndVortexsJokers\\bvjokers.lua",
               "RelativeToolTip": "bvjokers.lua",
-              "ViewState": "AgIAAJcBAAAAAAAAAAAqwLEBAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAEMAAAAAAAAAAAAgwOoAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-05-06T03:57:45.35Z",
               "EditorCaption": ""

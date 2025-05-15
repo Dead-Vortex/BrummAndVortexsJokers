@@ -135,16 +135,15 @@ SMODS.Joker {
 		if context.skip_blind then
 			card.ability.extra.skipped_blinds = card.ability.extra.skipped_blinds + 1
 			if card.ability.extra.skipped_blinds == 2 and #G.consumeables.cards < G.consumeables.config.card_limit then
-			card.ability.extra.skipped_blinds = 0
-			G.E_MANAGER:add_event(Event({
+				card.ability.extra.skipped_blinds = 0
+				G.E_MANAGER:add_event(Event({
 					func = function()
 						local card = SMODS.create_card{set = 'Spectral'}
 						G.consumeables:emplace(card)
 						return true
 					end
 				}))
-						card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil,
-						{ message = "+1 Spectral", colour = G.C.SECONDARY_SET.Spectral })
+				return {message = "+1 Spectral"}
 			end
 		end
 		if context.setting_blind then
@@ -180,13 +179,11 @@ SMODS.Joker {
 		if context.end_of_round and context.cardarea == G.jokers and not context.blueprint then
 			card.ability.extra.Xchips = card.ability.extra.Xchips - card.ability.extra.Xchips_loss
 			if card.ability.extra.Xchips <= 0 and not context.blueprint then
-				card:remove_from_deck()
 				card:start_dissolve({ G.C.RED }, nil, 1.6)
-				return { message = localize("k_eaten_ex"), colour = G.C.FILTER }
+				return{ message = localize('k_eaten_ex') }
 			else
 				if not context.blueprint then
-					card_eval_status_text(card, 'extra', nil, nil, nil,
-						{ message = "-X0.2 Chips", colour = G.C.CHIPS })
+					return { message = "-X0.2 Chips", colour = G.C.CHIPS }
 				end
 			end
 		end
@@ -203,7 +200,7 @@ SMODS.Joker {
 			"card in played hand"
 		}
 	},
-	config = { extra = { mult = 5, uniquecards = {}, uniquecardcount = 0 } },
+	config = { extra = { mult = 5 } },
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.mult } }
 	end,
@@ -212,6 +209,8 @@ SMODS.Joker {
 	pos = { x = 0, y = 0 },
 	cost = 3,
 	calculate = function(self, card, context)
+		local uniquecardcount = 0
+		local uniquecards = {}
 		if context.individual and context.cardarea == G.play then
 			if not table.contains(card.ability.extra.uniquecards, context.other_card:get_id()) then
 				table.insert(card.ability.extra.uniquecards, context.other_card:get_id())
@@ -250,8 +249,7 @@ SMODS.Joker {
 	calculate = function(self, card, context)
 		if context.before and not context.blueprint then
 			card.ability.extra.mult = card.ability.extra.mult + #context.scoring_hand
-			card_eval_status_text(card, 'extra', nil, nil, nil,
-				{ message = "+".. card.ability.extra.mult.. " Mult", colour = G.C.MULT })
+			return { message = "+".. card.ability.extra.mult.. " Mult", colour = G.C.MULT })
 		end
 		if context.joker_main then
 			return { mult = card.ability.extra.mult }
@@ -259,8 +257,7 @@ SMODS.Joker {
 		if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
 			if pseudorandom('gamblerjoker') < G.GAME.probabilities.normal / card.ability.extra.odds then
 				card.ability.extra.mult = 0
-				card_eval_status_text(card, 'extra', nil, nil, nil,
-					{ message = "Reset" })
+				return { message = "Reset" })
 			end
 		end
 	end
@@ -280,7 +277,7 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.extra_slots, card.ability.extra.slot_loss, card.ability.extra.plural } }
 	end,
-	blueprint_compat = true,
+	blueprint_compat = false,
 	eternal_compat = false,
 	rarity = 3,
 	atlas = 'default',
@@ -295,11 +292,12 @@ SMODS.Joker {
 	calculate = function(self, card, context)
 		if context.end_of_round and context.game_over == false and G.GAME.blind.boss and not context.repetition and not context.blueprint then
 			card.ability.extra.extra_slots = card.ability.extra.extra_slots - card.ability.extra.slot_loss
+			G.jokers.config.card_limit = G.jokers.config.card_limit - card.ability.extra.slot_loss
+			return { message = "-1 Joker Slot", colour = G.C.DARK_EDITION }
 		end
-		if card.ability.extra.extra_slots == 0 then
-			card:remove_from_deck()
+		if card.ability.extra.extra_slots < 1 then
 			card:start_dissolve({ G.C.RED }, nil, 1.6)
-			return { message = "Braincells?", colour = G.C.FILTER }
+			return{ message = "Braincells?" }
 		end
 	end
 }
@@ -363,8 +361,7 @@ SMODS.Joker {
 		end
 		if context.discard and not context.blueprint then
 			card.ability.extra.xmult = card.ability.extra.xmult + card.ability.extra.xmult_gain
-			card_eval_status_text(card, 'extra', nil, nil, nil,
-					{ message = "X".. card.ability.extra.xmult.. " Mult", colour = G.C.MULT })
+			return { message = "X".. card.ability.extra.xmult.. " Mult", colour = G.C.MULT })
 		end
 		if context.end_of_round and not context.blueprint then
 			card.ability.extra.xmult = 1
@@ -424,10 +421,10 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.enhance_odds, card.ability.extra.destroy_odds, (G.GAME.probabilities.normal or 1) } }
 	end,
 	blueprint_compat = true,
-	rarity = 3,
+	rarity = 2,
 	atlas = 'default',
 	pos = { x = 0, y = 0 },
-	cost = 9,
+	cost = 7,
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play then
 			other_card = card
@@ -475,11 +472,73 @@ SMODS.Joker {
 			end
 			return { level_up = true, message = localize('k_level_up_ex') }
 		end
-		if context.final_scoring_step and card.ability.extra.uses < 1 and not context.blueprint then
-			--wrong context
+		if context.final_scoring_step and not context.blueprint then
+			if card.ability.extra.uses < 1 then
+				card:start_dissolve({ G.C.RED }, nil, 1.6)
+				return { message = localize('k_eaten_ex') }
+			end
+		end
+	end,
+}
+
+SMODS.Joker {
+	key = 'placeholder',
+	loc_txt = {
+		name = 'Placeholder',
+		text = {
+			"{X:mult,C:white}X#1#{} Mult",
+			"Destroyed when Boss Blind defeated",
+			"{C:inactive}(note to self: finish joker later){}"
+		}
+	},
+	config = { extra = { xmult = 5 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.xmult } }
+	end,
+	blueprint_compat = true,
+	rarity = 2,
+	atlas = 'placeholder',
+	pos = { x = 0, y = 0 },
+	cost = 6,
+	calculate = function(self, card, context)
+		if context.end_of_round and G.GAME.blind.boss and not context.blueprint then
 			card:remove_from_deck()
-			card:start_dissolve({ G.C.RED }, nil, 1.6)
-			return { message = localize("k_eaten_ex"), colour = G.C.FILTER }
+				card:start_dissolve({ G.C.RED }, nil, 1.6)
+				return { message = "Final assets created!", colour = G.C.FILTER }
+		end
+		if context.joker_main then
+			return { xmult = card.ability.extra.xmult }
+		end
+	end,
+}
+
+SMODS.Joker {
+	key = 'primetime',
+	loc_txt = {
+		name = 'Prime Time',
+		text = {
+			"Each played {C:attention}2{}, {C:attention}3{}, {C:attention}5{}, or {C:attention}7{} gives",
+			"{C:mult}+#1#{} Mult when scored"
+		}
+	},
+	config = { extra = { mult = 5 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.mult } }
+	end,
+	blueprint_compat = true,
+	rarity = 1,
+	atlas = 'default',
+	pos = { x = 0, y = 0 },
+	cost = 5,
+	calculate = function(self, card, context)
+		if context.individual and context.cardarea == G.play then
+			if context.other_card:get_id() == 2
+			or context.other_card:get_id() == 3
+			or context.other_card:get_id() == 5
+			or context.other_card:get_id() == 7
+			then
+				return { mult = card.ability.extra.mult }
+			end
 		end
 	end,
 }
@@ -517,7 +576,12 @@ SMODS.Voucher {
 		info_queue[#info_queue + 1] = G.P_CENTERS.c_wheel_of_fortune
 	end,
 	calculate = function(self, card, context)
-		if context.end_of_round and G.GAME.blind.boss and context.main_eval and ((#G.consumeables.cards + G.GAME.consumeable_buffer) < G.consumeables.config.card_limit) and not G.GAME.used_vouchers['v_bvjokers_gamblingdisorder'] then
+		if context.end_of_round
+		and G.GAME.blind.boss
+		and context.main_eval
+		and ((#G.consumeables.cards + G.GAME.consumeable_buffer) < G.consumeables.config.card_limit)
+		and not G.GAME.used_vouchers['v_bvjokers_gamblingdisorder']
+		then
 			G.E_MANAGER:add_event(Event({
 					func = function()
 						SMODS.add_card{key = "c_wheel_of_fortune"}
